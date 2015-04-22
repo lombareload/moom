@@ -4,9 +4,9 @@
 function Queue(){
   this.first = null;
   this.dequeue = function(){
-    current = this.first;
+    var current = this.first;
     if(current){
-      this.first = first.next();
+      this.first = this.first.next();
       return current.rafaga;
     }
   };
@@ -30,7 +30,7 @@ function Queue(){
   };
   this.setEnqueueCallback = function(callback){
     this.callback = callback;
-  }
+  };
 }
 
 function Element(rafaga){
@@ -46,7 +46,7 @@ function Element(rafaga){
   };
   this.add = function(element){
     this.next = element;
-  }
+  };
 }
 Element.index = 0;
 

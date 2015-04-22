@@ -13,6 +13,7 @@ if [ -z "$NVM_PRESENT" ]; then
     fi
 else
     echo 'NVM ALREADY INSTALLED'
+    source ~/.nvm/nvm.sh
 fi
 
 NODEJS_PRESENT=$(grep 'nvm use' $HOME/.bashrc)
@@ -28,6 +29,11 @@ if [ -z "$NODEJS_PRESENT" ]; then
     fi
 else
     echo 'NODEJS ALREADY INSTALLED'
+    nvm use 0.12.2
 fi
 
-#npm install -g :
+npm install -g yo
+npm install -g gulp
+cd /vagrant
+npm install
+gulp serve &

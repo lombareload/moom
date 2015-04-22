@@ -92,7 +92,7 @@ $(function(){
 
   function addBlock(index, offset){
     var span = document.createElement('span');
-    span.style.left = offset + "px";
+    span.style.left = offset + 'px';
     span.className = 'bloque';
     $('#' + index).append(span);
   }
@@ -100,7 +100,7 @@ $(function(){
   function addGantRow(element){
     gant.append('<div class="form-group">' +
     '<label class="control-label col-sm-1">' + element.index +'</label>' +
-    '<div class="col-sm-11"><div id="' + element.index + '" class="form-control"></div></div></div>')
+    '<div class="col-sm-11"><div id="' + element.index + '" class="form-control"></div></div></div>');
   }
 
   $('#agregar').click(function(){
