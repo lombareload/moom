@@ -1,5 +1,6 @@
 sudo apt-get update
 sudo apt-get install -y build-essential
+sudo apt-get install -y git
 echo 'INSTALLING AS USER = '$(whoami)
 NVM_PRESENT=$(grep NVM_DIR $HOME/.bashrc)
 if [ -z "$NVM_PRESENT" ]; then
@@ -32,8 +33,17 @@ else
     nvm use 0.12.2
 fi
 
+echo 'INSTALLING YEOMAN'
 npm install -g yo
+echo 'INSTALLING BOWER'
+npm install -g bower
+echo 'INSTALLING GULP'
 npm install -g gulp
 cd /vagrant
+if [ -d /vagrant/node_modules ]; then
+    echo 'DELETING node_modules FOLDER'
+    rm -rf /vagrant/node_modules
+fi
 npm install
-gulp serve &
+bower install
+gulp serve
