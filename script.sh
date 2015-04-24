@@ -46,4 +46,4 @@ if [ -d /vagrant/node_modules ]; then
 fi
 npm install
 bower install
-gulp serve
+#node server.js &
