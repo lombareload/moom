@@ -1,0 +1,9 @@
+prioridad 1 round robin (manda a suspendido cuando se acaba el quantum)
+prioridad 2 sjtrf (desaloja cuando hay una rafaga menor y organiza por rafaga)
+  (manda a suspendidos cuando entra uno de menor rafaga)
+prioridad 3 fifo
+
+metrica
+  cantidad de procesos por cola
+  tiempo de ejecucion de todos los procesos
+  espera de la cola para ejecutarse
