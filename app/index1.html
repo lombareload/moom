@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>sft</title>
+    <title>Colas multiples</title>
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
     <!-- build:css styles/vendor.css -->
@@ -23,123 +23,329 @@
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="container">
-
+    <div class="fluid-container">
       <div class="row">
-        <div class="col-xs-4 col-xs-offset-4">
-          <div class="panel panel-success">
-            <div class="panel-heading">Proceso</div>
+        <div class="col-xs-12">
+          <p class="text-center h1">
+            Colas Multiples
+          </p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <strong class="panel-title">Proceso</strong>
+            </div>
             <div class="panel-body form-horizontal">
-              <div class="form-group">
-                <div class="control-label col-sm-4">Rafaga: </div>
-                <div class="col-sm-8">
-                  <input id='rafaga' type="text" class="form-control"></input>
+              <!--  -->
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="cpu1rafaga" class="control-label col-xs-6">Rafaga</label>
+                  <div class="col-xs-6">
+                    <input type="number" class="form-control" id="cpu1rafaga">
+                  </div>
                 </div>
               </div>
-              <!-- <div class="form-group">
-                <div class="control-label col-sm-4">Proceso: </div>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control">
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="cpu1priodad" class="control-label col-xs-6">Prioridad</label>
+                  <div class="col-xs-6">
+                    <select class="form-control" id="cpu1priodad">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
                 </div>
-              </div> -->
-              <button id="agregar" class="btn btn-success btn-block">Agregar</button>
+              </div>
+              <div class="col-xs-2">
+                <button class="btn btn-default" type="button" id="cpu1agregar">Agregar</button>
+              </div>
+              <!--  -->
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-4 col-sm-offset-4 col-xs-4 col-xs-offset-4">
-          <div class="panel panel-success">
-            <div class="panel-heading">Sección Crítica</div>
-            <div class="panel-body form-horizontal">
-              <!-- <div class="form-group">
-                <div class="col-sm-5 control-label">Quantum: </div>
-                <div class="col-sm-7">
-                  <input type="text" class="form-control">
-                </div>
-              </div> -->
-              <button id='iniciar' class="btn-success btn-block btn">Iniciar</button>
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>process</th>
-                    <th>rafaga</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td id='current-process'></td>
-                    <td id='current-rafaga'></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-3 col-xs-4">
-          <div class="panel panel-primary">
-            <div class="panel-heading">Listos</div>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Proceso</th>
-                  <th>Rafaga</th>
-                </tr>
-              </thead>
-              <tbody id='process-ready-view'>
-              </tbody>
-            </table>
-        </div>
-      </div>
-        <div class="col-sm-3 col-xs-4">
-          <div class="panel panel-danger">
-            <div class="panel-heading">Bloqueados</div>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Proceso</th>
-                  <th>Rafaga</th>
-                </tr>
-              </thead>
-            </table>
-          </div>
-        </div>
-        <div class="col-sm-3 col-xs-4">
-          <div class="panel panel-warning">
-            <div class="panel-heading">Suspendidos</div>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Proceso</th>
-                  <th>Rafaga</th>
-                </tr>
-              </thead>
-              <tbody id='suspended'>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="col-sm-3 col-xs-4">
+        <div class="col-xs-4">
           <div class="panel panel-info">
-            <div class="panel-heading">Terminados</div>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Proceso</th>
-                  <th>Rafaga</th>
-                </tr>
-              </thead>
-              <tbody id='finished'></tbody>
-            </table>
+            <div class="panel-heading">
+              <strong class="panel-title">Proceso</strong>
+            </div>
+            <div class="panel-body">
+              <!--  -->
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="" class="control-label col-xs-6">Rafaga</label>
+                  <div class="col-xs-6">
+                    <input type="number" class="form-control" id="cpu2rafaga">
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="" class="control-label col-xs-6">Prioridad</label>
+                  <div class="col-xs-6">
+                    <select class="form-control" id="cpu2priodad">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <button class="btn btn-default" type="button" id="cpu2agregar">Agregar</button>
+              </div>
+              <!--  -->
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <strong class="panel-title">Proceso</strong>
+            </div>
+            <div class="panel-body">
+              <!--  -->
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="" class="control-label col-xs-6">Rafaga</label>
+                  <div class="col-xs-6">
+                    <input type="number" class="form-control" id="cpu3rafaga">
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-5">
+                <div class="form-group">
+                  <label for="" class="control-label col-xs-6">Prioridad</label>
+                  <div class="col-xs-6">
+                    <select class="form-control" id="cpu3priodad">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-2">
+                <button class="btn btn-default" type="button" id="cpu3agregar">Agregar</button>
+              </div>
+              <!--  -->
+            </div>
           </div>
         </div>
       </div>
+
+
+
+
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <strong class="panel-title">CPU1</strong>
+            </div>
+            <div class="panel-body">
+              <!--  -->
+              <div class="row">
+                <div class="col-xs-6 col-xs-offset-3">
+                  <div class="panel panel-danger">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Sección Critica</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4">
+                  <div class="panel panel-success">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 1</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla1cpu1"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 2</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla2cpu1"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-warning">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 3</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla3cpu1"></table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Suspendidos</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Terminados</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <!--  -->
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+        <div class="col-xs-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <strong class="panel-title">CPU2</strong>
+            </div>
+            <div class="panel-body">
+              <!--  -->
+              <div class="row">
+                <div class="col-xs-6 col-xs-offset-3">
+                  <div class="panel panel-danger">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Sección Critica</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4">
+                  <div class="panel panel-success">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 1</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla1cpu2"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 2</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla2cpu2"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-warning">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 3</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla3cpu2"></table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Suspendidos</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Terminados</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <!--  -->
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <strong class="panel-title">CPU3</strong>
+            </div>
+            <div class="panel-body">
+              <!--  -->
+              <div class="row">
+                <div class="col-xs-6 col-xs-offset-3">
+                  <div class="panel panel-danger">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Sección Critica</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4">
+                  <div class="panel panel-success">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 1</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla1cpu3"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 2</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla2cpu3"></table>
+                    </div>
+                  </div>
+                  <div class="panel panel-warning">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Listos Prioridad 3</strong>
+                    </div>
+                    <div class="panel-body panel-no-padding">
+                      <table class="table" id="tabla3cpu3"></table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Suspendidos</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+                <div class="col-xs-4">
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong class="panel-title">Terminados</strong>
+                    </div>
+                    <div class="panel-body"></div>
+                  </div>
+                </div>
+              </div>
+              <!--  -->
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
       <div class="row form-horizontal">
         <div class="panel panel-default">
           <div class="panel-heading">Gant</div>
@@ -148,7 +354,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
@@ -156,24 +362,24 @@
     <!-- endbower -->
     <!-- endbuild -->
 
-        <!-- build:js scripts/plugins.js -->
-        <script src="./bower_components/bootstrap/js/affix.js"></script>
-        <script src="./bower_components/bootstrap/js/alert.js"></script>
-        <script src="./bower_components/bootstrap/js/dropdown.js"></script>
-        <script src="./bower_components/bootstrap/js/tooltip.js"></script>
-        <script src="./bower_components/bootstrap/js/modal.js"></script>
-        <script src="./bower_components/bootstrap/js/transition.js"></script>
-        <script src="./bower_components/bootstrap/js/button.js"></script>
-        <script src="./bower_components/bootstrap/js/popover.js"></script>
-        <script src="./bower_components/bootstrap/js/carousel.js"></script>
-        <script src="./bower_components/bootstrap/js/scrollspy.js"></script>
-        <script src="./bower_components/bootstrap/js/collapse.js"></script>
-        <script src="./bower_components/bootstrap/js/tab.js"></script>
-        <!-- endbuild -->
+    <!-- build:js scripts/plugins.js -->
+    <script src="./bower_components/bootstrap/js/affix.js"></script>
+    <script src="./bower_components/bootstrap/js/alert.js"></script>
+    <script src="./bower_components/bootstrap/js/dropdown.js"></script>
+    <script src="./bower_components/bootstrap/js/tooltip.js"></script>
+    <script src="./bower_components/bootstrap/js/modal.js"></script>
+    <script src="./bower_components/bootstrap/js/transition.js"></script>
+    <script src="./bower_components/bootstrap/js/button.js"></script>
+    <script src="./bower_components/bootstrap/js/popover.js"></script>
+    <script src="./bower_components/bootstrap/js/carousel.js"></script>
+    <script src="./bower_components/bootstrap/js/scrollspy.js"></script>
+    <script src="./bower_components/bootstrap/js/collapse.js"></script>
+    <script src="./bower_components/bootstrap/js/tab.js"></script>
+    <!-- endbuild -->
 
-        <!-- build:js scripts/main.js -->
-        <script src="./scripts/main.js"></script>
-        <script src="./scripts/app.js"></script>
-        <!-- endbuild -->
-</body>
+    <!-- build:js scripts/main.js -->
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/app.js"></script>
+    <!-- endbuild -->
+  </body>
 </html>

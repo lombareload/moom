@@ -1,41 +1,62 @@
 /* jshint devel:true */
 'use strict';
 
+// Queue class
 function Queue(){
   this.first = null;
   this.dequeue = function(){
     var current = this.first;
     if(current){
       this.first = this.first.next();
-      return current.rafaga;
+      return current.value;
     }
   };
   this.enqueue = function(value){
     if(this.first){
       var current = this.first;
       while(current.hasNext()){
-        current = current.hasNext();
+        current = current.next();
       }
       current.add(new Element(value));
     } else {
       this.first = new Element(value);
     }
-    this.callback();
+    this.callback && this.callback(value);
   };
   this.hasMoreElements = function(){
     return !!this.first;
   };
   this.peek = function(){
-    return this.first;
+    return this.first && this.first.value;
   };
   this.setEnqueueCallback = function(callback){
     this.callback = callback;
   };
+  this.clone = function(){
+    var result = new Queue();
+    this.iterate(result.enqueue.bind(result));
+    return result;
+  };
+  this.iterate = function(consumer){
+    var result = new Queue();
+    var current = this.first;
+    while(current){
+      consumer(current.value);
+      current = current.next();
+    }
+    return result;
+  };
+  this.asArray = function(){
+    var result = [];
+    this.iterate(result.push.bind(result));
+    return result;
+  }
 }
 
-function Element(rafaga){
-  this.original = rafaga;
-  this.rafaga = rafaga;
+// Queue Element class
+function Element(value){
+  this.original = value;
+  this.value = value;
   this.index = Element.index++;
   this.nextNode = null;
   this.next = function(){
@@ -45,38 +66,37 @@ function Element(rafaga){
     return !!this.nextNode;
   };
   this.add = function(element){
-    this.next = element;
+    this.nextNode = element;
   };
 }
 Element.index = 0;
 
+// Process class
+function Process(/*nombre, */rafaga, prioridad, recurso){
+  // this.nombre = nombre;
+  this.original = rafaga;
+  this.nombre = 'Proc-' + Process.index++;
+  this.rafaga = rafaga;
+  this.prioridad = prioridad;
+  this.recurso = recurso;
+}
+Process.index = 0;
 
-// function Queue(){
-//   this.list = new Element();
-//   this.enqueue = function(element){
-//
-//
-//     this.data.push(element);
-//     this.data.sort(function(e1, e2){
-//       return e1.rafaga < e2.rafaga;
-//     });
-//     this.callback && this.callback();
-//   };
-//   this.dequeue = function(){
-//     return this.data.pop();
-//   };
-//   this.values = function(){
-//     return this.data;
-//   };
-//   this.hasMoreElements = function(){
-//     return this.data.length > 0;
-//   };
-//   this.peek = function(){
-//     if(this.hasMoreElements()){
-//       return this.data[this.data.length-1];
-//     }
-//   }
-//   this.setEnqueueCallback = function(callback){
-//     this.callback = callback;
-//   }
-// }
+function readQueueIntoArray(queue){
+  var copy = queue.clone();
+  var result = [];
+  while(copy.hasMoreElements()){
+    result.push(copy.dequeue());
+  }
+  return result;
+}
+
+
+var queue = new Queue();
+queue.enqueue(1);
+queue.enqueue(2);
+var copy = queue.clone();
+console.log(queue.dequeue());
+console.log(queue.clone().dequeue());
+console.log(queue.peek());
+console.log(copy.asArray());

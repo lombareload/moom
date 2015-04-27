@@ -1,111 +1,68 @@
 'use strict';
+
+var PRIORIDAD_CSS_CLASS = {
+  1: 'success',
+  2: 'info',
+  3: 'warning'
+};
+
+var QUEUES = {
+  prioridad1cpu1: new Queue(),
+  prioridad2cpu1: new Queue(),
+  prioridad3cpu1: new Queue(),
+
+  prioridad1cpu2: new Queue(),
+  prioridad2cpu2: new Queue(),
+  prioridad3cpu2: new Queue(),
+
+  prioridad1cpu3: new Queue(),
+  prioridad2cpu3: new Queue(),
+  prioridad3cpu3: new Queue()
+};
+
 $(function(){
-  var queue = new Queue();
-  var suspendedQueue = new Queue();
-  var suspendedView = $('#suspended');
-  var readyView = $('#process-ready-view');
-  var finishedView = $('#finished');
-  var finishedElements = [];
-  var gant = $('#gant');
+  function initAgregarCpu (index){
+    $("#cpu" + index + "agregar").click(function(){
+      var rafaga = $("#cpu" + index + "rafaga").val();
+      rafaga = parseInt(rafaga);
+      var prioridad = $("#cpu" + index + "priodad").val();
+      prioridad = parseInt(prioridad);
+      var process = new Process(rafaga, prioridad);
 
-  function drawReadyQueue(){
-    readyView.html(queueAsTable(queue));
-  }
-
-  queue.setEnqueueCallback(drawReadyQueue);
-
-  function drawSuspendedQueue(){
-    suspendedView.html(queueAsTable(suspendedQueue));
-  }
-  suspendedQueue.setEnqueueCallback(drawSuspendedQueue);
-
-  function queueAsTable(queue){
-    return queue.values().map(function(element){
-      var html = '<tr><td>' + element.index + '</td>' +
-        '<td>' + element.rafaga.toPrecision(3) + '</td></tr>';
-      return $(html);
+      var queue = QUEUES['prioridad' + prioridad + "cpu" + index];
+      queue.enqueue(process);
+      updateHTMLQueue(prioridad, index, queue);
     });
   }
+  [1,2,3].forEach(initAgregarCpu);
 
-  function getProcess(){
-    var value = $('#rafaga').val();
-    console.log('value', value);
-    var rafaga = parseInt(value);
-    return new Element(rafaga);
+  var TABLAS = {
+    tabla1cpu1: $('#tabla1cpu1'),
+    tabla2cpu1: $('#tabla2cpu1'),
+    tabla3cpu1: $('#tabla3cpu1'),
+    tabla1cpu2: $('#tabla1cpu2'),
+    tabla2cpu2: $('#tabla2cpu2'),
+    tabla3cpu2: $('#tabla3cpu2'),
+    tabla1cpu3: $('#tabla1cpu3'),
+    tabla2cpu3: $('#tabla2cpu3'),
+    tabla3cpu3: $('#tabla3cpu3')
   }
 
-  function addToFinished(element){
-    finishedElements.push(element);
-
-    finishedView.html(finishedElements.map(
-      function(element){
-        var html = '<tr><td>' + element.index + '</td>' +
-          '<td>' + element.original + '</td></tr>';
-        return $(html);
-      })
-    );
+  function processToHTML(process){
+    var html =  '<tr class="'+PRIORIDAD_CSS_CLASS[process.prioridad]+'">' +
+                  '<td>'+process.nombre+'</td>' +
+                  '<td>'+process.rafaga+'</td>' +
+                '</tr>';
+    return html;
   }
 
-  $('#iniciar').click(function(){
-    var leftOffset = 0;
-    var elementOffset = 0;
-    var element = queue.dequeue();
-    var currentProcess = $('#current-process');
-    var currentRafaga = $('#current-rafaga');
-    if(element){
-      currentProcess.html(element.index);
-      var intervalStop = setInterval(function(){
-        if(!element){
-          clearInterval(intervalStop);
-          return;
-        }
-        if(element.rafaga > 0){
-          leftOffset += 5;
-          var posibleElement = queue.peek();
-          if(posibleElement && posibleElement.rafaga < element.rafaga){
-            suspendedQueue.enqueue(element);
-            element = queue.dequeue();
-            elementOffset = leftOffset;
-          }
-          // addBlock(element.index, elementOffset);
-          addBlock(element.index, leftOffset);
-          element.rafaga = element.rafaga - 0.1;
-          currentRafaga.html(element.rafaga > 0 ? element.rafaga.toPrecision(3) : 0);
-        } else {
-          addToFinished(element);
-          if(suspendedQueue.hasMoreElements()){
-            element = suspendedQueue.dequeue();
-            drawSuspendedQueue();
-          }else{
-            element = queue.dequeue();
-            drawReadyQueue();
-          }
-          if(element){
-            elementOffset = leftOffset;
-            currentProcess.html(element.index);
-            readyView.html(queueAsTable(queue));
-          }
-        }
-      }, 100);
-    }
-  });
+  function updateHTMLQueue(prioridad, cpu, queue){
+    var tabla = TABLAS['tabla'+prioridad+'cpu'+cpu];
+    var procesos = queue.asArray();
 
-  function addBlock(index, offset){
-    var span = document.createElement('span');
-    span.style.left = offset + 'px';
-    span.className = 'bloque';
-    $('#' + index).append(span);
+    tabla.html(procesos.map(processToHTML));
   }
-
-  function addGantRow(element){
-    gant.append('<div class="form-group">' +
-    '<label class="control-label col-sm-1">' + element.index +'</label>' +
-    '<div class="col-sm-11"><div id="' + element.index + '" class="form-control"></div></div></div>');
-  }
-
-  $('#agregar').click(function(){
-    var element = getProcess();
-    addGantRow(element);
-    queue.enqueue(element);
-  });
+  // $("#cpu1rafaga");
+  // $("#cpu1priodad");
+  // $("#cpu1agregar");
 });

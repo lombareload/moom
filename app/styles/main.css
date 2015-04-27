@@ -88,6 +88,10 @@ body {
   }
 }
 
+.panel-no-padding{
+  padding: 0;
+}
+
 .bloque{
   position: absolute;
   /*float: left;*/
