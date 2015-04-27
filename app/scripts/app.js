@@ -21,6 +21,14 @@ var QUEUES = {
 };
 
 $(function(){
+  function addGantForProcess(cpu, nombre){
+    var html =  '<div class="progress" id="'+nombre+'">' +
+                  '<div style="position: relative;" class="text-center">' + nombre +
+                  '</div>'
+                '</div>';
+    $('#gant'+cpu).append(html);
+  }
+
   function initAgregarCpu (index){
     $("#cpu" + index + "agregar").click(function(){
       var rafaga = $("#cpu" + index + "rafaga").val();
@@ -32,6 +40,7 @@ $(function(){
       var queue = QUEUES['prioridad' + prioridad + "cpu" + index];
       queue.enqueue(process);
       updateHTMLQueue(prioridad, index, queue);
+      addGantForProcess(index, process.nombre);
     });
   }
   [1,2,3].forEach(initAgregarCpu);
@@ -59,7 +68,6 @@ $(function(){
   function updateHTMLQueue(prioridad, cpu, queue){
     var tabla = TABLAS['tabla'+prioridad+'cpu'+cpu];
     var procesos = queue.asArray();
-
     tabla.html(procesos.map(processToHTML));
   }
   // $("#cpu1rafaga");
