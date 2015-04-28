@@ -69,8 +69,6 @@ $(function(){
       prioridad = parseInt(prioridad);
       var process = new Process(rafaga, prioridad);
 
-      console.log('prioridad' + prioridad + "cpu" + index);
-
       var queue = QUEUES['prioridad' + prioridad + "cpu" + index];
       addGantForProcess(index, process.nombre);
       queue.enqueue(process);
@@ -174,16 +172,13 @@ $(function(){
 
 
   function fillTime(element){
-    var selector = '#'+element.nombre+' .progress-bar:last-child';
-    console.log(selector);
-    var htmlElement = $(selector);
+    var htmlElement = $('#'+element.nombre+' .progress-bar:last-child');
     var currentWidth = parseInt(htmlElement.css('width'));
     currentWidth += 10;
     htmlElement.css('width', currentWidth+'px');
   }
 
   function addTimeAll(){
-    console.log('addTimeAll');
     SECCIONES.seccionCritica1.element && fillTime(SECCIONES.seccionCritica1.element);
     SECCIONES.seccionCritica2.element && fillTime(SECCIONES.seccionCritica2.element);
     SECCIONES.seccionCritica3.element && fillTime(SECCIONES.seccionCritica3.element);
@@ -209,11 +204,13 @@ $(function(){
   }
 
   // cada decima de segundo
-  // window.setInterval = function(fn){fn();};
   $('#iniciar').click(function(){
+    $('#iniciar').unbind('click');
+    var iteraciones = [0, 0, 0, 0];
     var interrupt = setInterval(function(){
-      addTimeAll();
-      var hasFinished = [1,2,3].every(function(index){
+
+      var parar = [true, true, true, true];
+      var hasFinished = [1,2,3].forEach(function(index){
         var seccionCritica = SECCIONES['seccionCritica' + index];
         var queue1 = QUEUES['prioridad1cpu'+index];
         var queue2 = QUEUES['prioridad2cpu'+index];
@@ -222,33 +219,21 @@ $(function(){
 
 
         if(element){
-          // switch(element.prioridad){
-          //   case 1:
-          //     processPrioridad1(element, seccionCritica, index);
-          //     break;
-          //   case 2:
-          //     processPrioridad2(element, seccionCritica, index);
-          //     break;
-          //   case 3:
-          //     processPrioridad3(element, seccionCritica, index);
-          // }
           processPrioridad(element, seccionCritica, index);
-          return false;
+          iteraciones[index] += 1;
+          parar[index] = false;
         } else{
-          var suspended1 = SUSPENDED.suspended1;
-          var suspended2 = SUSPENDED.suspended2;
-          var suspended3 = SUSPENDED.suspended3;
-
+          var suspended = SUSPENDED['suspended'+index];
           if(queue1.hasMoreElements()){
             seccionCritica.element = queue1.dequeue();
             updateHTMLQueue(1, index, queue1);
-          } else if(suspended1.hasMoreElements()){
-            seccionCritica.element = suspended1.dequeue();
-            updateSuspendedHTML(index, suspended1);
-          } else if(suspended2.hasMoreElements()){
-            queue2.enqueue(suspended2.dequeue());
+          } else if(suspended.hasMoreElements() && suspended.peek().prioridad == 1){
+            seccionCritica.element = suspended.dequeue();
+            updateSuspendedHTML(index, suspended);
+          } else if(suspended.hasMoreElements() && suspended.peek().prioridad == 2){
+            queue2.enqueue(suspended.dequeue());
             updateHTMLQueue(2, index, queue2);
-            updateSuspendedHTML(index, suspended2);
+            updateSuspendedHTML(index, suspended);
           } else if(queue2.hasMoreElements()){
             seccionCritica.element = queue2.dequeue();
             updateHTMLQueue(2, index, queue2);
@@ -256,27 +241,31 @@ $(function(){
             seccionCritica.element = queue3.dequeue();
             updateHTMLQueue(3, index, queue3);
           } else{
-            return true;
+            parar[index] = true;
+            return;
           }
-          appendCritico(seccionCritica.element);
+          seccionCritica.element && appendCritico(seccionCritica.element);
           updateSeccionCriticaHTML(seccionCritica, index);
-          return false;
+          parar[index] = false;
         }
       });
-      if(hasFinished){
-        alert('game over');
+      if(parar.every(function(p){return p;})){
+        var centecimas = iteraciones.slice(1);
+
+        $('#myModal .modal-body').html(centecimas.map(function(centecima, index){
+          var html = '<div>CPU'+(index+1)+' se ejecuto durante '+ centecima*0.1 +' segundos</div>';
+          return html;
+        }));
+        $('#myModal').modal('show');
         clearInterval(interrupt);
       }
+      addTimeAll();
     }, 100);
-    this.unbind('click');
   });
 
   function processPrioridad(element, seccionCritica, index){
     var prioridad = element.prioridad;
     var compareQuantum = seccionCritica.quantum * 10;
-
-    console.log('element', element);
-    console.log('seccionCritica', seccionCritica);
     if(element.rafaga > 0){
 
       element.rafaga = parseFloat((element.rafaga-0.1).toFixed(1));
