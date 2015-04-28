@@ -92,11 +92,11 @@ function readQueueIntoArray(queue){
 }
 
 
-var queue = new Queue();
-queue.enqueue(1);
-queue.enqueue(2);
-var copy = queue.clone();
-console.log(queue.dequeue());
-console.log(queue.clone().dequeue());
-console.log(queue.peek());
-console.log(copy.asArray());
+// var queue = new Queue();
+// queue.enqueue(1);
+// queue.enqueue(2);
+// var copy = queue.clone();
+// console.log(queue.dequeue());
+// console.log(queue.clone().dequeue());
+// console.log(queue.peek());
+// console.log(copy.asArray());
