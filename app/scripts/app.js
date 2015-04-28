@@ -33,9 +33,29 @@ var TERMINADOS = {
 }
 
 $(function(){
+  QUEUES.prioridad1cpu1.setEnqueueCallback(appendListo);
+  QUEUES.prioridad2cpu1.setEnqueueCallback(appendListo);
+  QUEUES.prioridad3cpu1.setEnqueueCallback(appendListo);
+
+  QUEUES.prioridad1cpu2.setEnqueueCallback(appendListo);
+  QUEUES.prioridad2cpu2.setEnqueueCallback(appendListo);
+  QUEUES.prioridad3cpu2.setEnqueueCallback(appendListo);
+
+  QUEUES.prioridad1cpu3.setEnqueueCallback(appendListo);
+  QUEUES.prioridad2cpu3.setEnqueueCallback(appendListo);
+  QUEUES.prioridad3cpu3.setEnqueueCallback(appendListo);
+
+  SUSPENDED.suspended1.setEnqueueCallback(appendSuspendido);
+  SUSPENDED.suspended2.setEnqueueCallback(appendSuspendido);
+  SUSPENDED.suspended3.setEnqueueCallback(appendSuspendido);
+
+  TERMINADOS.terminados1.setEnqueueCallback(appendFinal);
+  TERMINADOS.terminados2.setEnqueueCallback(appendFinal);
+  TERMINADOS.terminados3.setEnqueueCallback(appendFinal);
+
   function addGantForProcess(cpu, nombre){
     var html =  '<div class="progress" id="'+nombre+'">' +
-                  '<div style="position: relative;" class="text-center">' + nombre +
+                  '<div style="position: absolute;" class="text-center">' + nombre +
                   '</div>'
                 '</div>';
     $('#gant'+cpu).append(html);
@@ -52,14 +72,14 @@ $(function(){
       console.log('prioridad' + prioridad + "cpu" + index);
 
       var queue = QUEUES['prioridad' + prioridad + "cpu" + index];
+      addGantForProcess(index, process.nombre);
       queue.enqueue(process);
       updateHTMLQueue(prioridad, index, queue);
-      addGantForProcess(index, process.nombre);
     });
   }
   [1,2,3].forEach(initAgregarCpu);
 
-  var TABLAS = {
+  var TABLAS_HTML = {
     tabla1cpu1: $('#tabla1cpu1'),
     tabla2cpu1: $('#tabla2cpu1'),
     tabla3cpu1: $('#tabla3cpu1'),
@@ -69,7 +89,25 @@ $(function(){
     tabla1cpu3: $('#tabla1cpu3'),
     tabla2cpu3: $('#tabla2cpu3'),
     tabla3cpu3: $('#tabla3cpu3')
-  }
+  };
+
+  var SUSPENDIDOS_HTML = {
+    suspendidos1: $('#suspendidos1'),
+    suspendidos2: $('#suspendidos2'),
+    suspendidos3: $('#suspendidos3')
+  };
+
+  var TERMINADOS_HTML = {
+    terminados1: $('#terminados1'),
+    terminados2: $('#terminados2'),
+    terminados3: $('#terminados3')
+  };
+
+  var SECCION_HTML = {
+    seccion1: $('#critico1'),
+    seccion2: $('#critico2'),
+    seccion3: $('#critico3')
+  };
 
   function processToHTML(process){
     var html =  '<tr class="'+PRIORIDAD_CSS_CLASS[process.prioridad]+'">' +
@@ -89,69 +127,174 @@ $(function(){
   });
 
   function updateHTMLQueue(prioridad, cpu, queue){
-    var tabla = TABLAS['tabla'+prioridad+'cpu'+cpu];
+    if(!queue){
+      queue = QUEUES['prioridad'+prioridad+'cpu'+cpu];
+    }
+    var tabla = TABLAS_HTML['tabla'+prioridad+'cpu'+cpu];
     var procesos = queue.asArray();
     tabla.html(procesos.map(processToHTML));
   }
 
+  function updateSuspendedHTML(cpu, queue){
+    var tabla = SUSPENDIDOS_HTML['suspendidos'+cpu];
+    var procesos = queue.asArray();
+    tabla.html(procesos.map(processToHTML));
+  }
+
+  function updateTerminadosHTML(cpu, queue){
+    var tabla = TERMINADOS_HTML['terminados'+cpu];
+    var procesos = queue.asArray();
+    tabla.html(procesos.map(processToHTML));
+  }
+
+  function updateSeccionCriticaHTML(seccionCritica, cpu){
+    var seccion = SECCION_HTML['seccion'+cpu];
+    var html;
+    if(seccionCritica.element){
+      html =  '<div class="text-center text-'+PRIORIDAD_CSS_CLASS[seccionCritica.element.prioridad]+'">'+seccionCritica.element.nombre+'</div>'      +
+              '<div class="text-center text-'+PRIORIDAD_CSS_CLASS[seccionCritica.element.prioridad]+'">Ejecucion: '+seccionCritica.current+'</div>'  +
+              '<div class="text-center text-'+PRIORIDAD_CSS_CLASS[seccionCritica.element.prioridad]+'">Restante: '+seccionCritica.element.rafaga+'</div>';
+    } else{
+      html = '<div class="text-center">Vacio</div>';
+    }
+    seccion.html(html);
+  }
+
+  function appendBar(element, style){
+    var htmlElement = $('#'+element.nombre);
+    var html = '<div class="progress-bar progress-bar-'+style+'" style="width:0px"></div>'
+    htmlElement.append(html);
+  }
+
+  function appendCritico(element){appendBar(element, 'success');};
+  function appendListo(element){appendBar(element, 'warning');};
+  function appendSuspendido(element){appendBar(element, 'danger');};
+  function appendFinal(element){appendBar(element,'info');};
+
+
+
+  function fillTime(element){
+    var selector = '#'+element.nombre+' .progress-bar:last-child';
+    console.log(selector);
+    var htmlElement = $(selector);
+    var currentWidth = parseInt(htmlElement.css('width'));
+    currentWidth += 10;
+    htmlElement.css('width', currentWidth+'px');
+  }
+
+  function addTimeAll(){
+    console.log('addTimeAll');
+    SECCIONES.seccionCritica1.element && fillTime(SECCIONES.seccionCritica1.element);
+    SECCIONES.seccionCritica2.element && fillTime(SECCIONES.seccionCritica2.element);
+    SECCIONES.seccionCritica3.element && fillTime(SECCIONES.seccionCritica3.element);
+    QUEUES.prioridad1cpu1.iterate(fillTime);
+    QUEUES.prioridad2cpu1.iterate(fillTime);
+    QUEUES.prioridad3cpu1.iterate(fillTime);
+
+    QUEUES.prioridad1cpu2.iterate(fillTime);
+    QUEUES.prioridad2cpu2.iterate(fillTime);
+    QUEUES.prioridad3cpu2.iterate(fillTime);
+
+    QUEUES.prioridad1cpu3.iterate(fillTime);
+    QUEUES.prioridad2cpu3.iterate(fillTime);
+    QUEUES.prioridad3cpu3.iterate(fillTime);
+
+    SUSPENDED.suspended1.iterate(fillTime);
+    SUSPENDED.suspended2.iterate(fillTime);
+    SUSPENDED.suspended3.iterate(fillTime);
+
+    TERMINADOS.terminados1.iterate(fillTime);
+    TERMINADOS.terminados2.iterate(fillTime);
+    TERMINADOS.terminados3.iterate(fillTime);
+  }
+
   // cada decima de segundo
-  setInterval = function(fn){fn();};
+  // window.setInterval = function(fn){fn();};
   $('#iniciar').click(function(){
-    console.log('asd');
     var interrupt = setInterval(function(){
-      [1,2,3].forEach(function(index){
+      addTimeAll();
+      var hasFinished = [1,2,3].every(function(index){
         var seccionCritica = SECCIONES['seccionCritica' + index];
         var queue1 = QUEUES['prioridad1cpu'+index];
         var queue2 = QUEUES['prioridad2cpu'+index];
         var queue3 = QUEUES['prioridad3cpu'+index];
         var element = seccionCritica.element;
 
+
         if(element){
-          switch(element.prioridad){
-            case 1:
-              processPrioridad1(element, seccionCritica, index);
-              break;
-            case 2:
-              processPrioridad2(element, seccionCritica, index);
-              break;
-            case 3:
-              processPrioridad3(element, seccionCritica, index);
+          // switch(element.prioridad){
+          //   case 1:
+          //     processPrioridad1(element, seccionCritica, index);
+          //     break;
+          //   case 2:
+          //     processPrioridad2(element, seccionCritica, index);
+          //     break;
+          //   case 3:
+          //     processPrioridad3(element, seccionCritica, index);
+          // }
+          processPrioridad(element, seccionCritica, index);
+          return false;
+        } else{
+          var suspended1 = SUSPENDED.suspended1;
+          var suspended2 = SUSPENDED.suspended2;
+          var suspended3 = SUSPENDED.suspended3;
+
+          if(queue1.hasMoreElements()){
+            seccionCritica.element = queue1.dequeue();
+            updateHTMLQueue(1, index, queue1);
+          } else if(suspended1.hasMoreElements()){
+            seccionCritica.element = suspended1.dequeue();
+            updateSuspendedHTML(index, suspended1);
+          } else if(suspended2.hasMoreElements()){
+            queue2.enqueue(suspended2.dequeue());
+            updateHTMLQueue(2, index, queue2);
+            updateSuspendedHTML(index, suspended2);
+          } else if(queue2.hasMoreElements()){
+            seccionCritica.element = queue2.dequeue();
+            updateHTMLQueue(2, index, queue2);
+          } else if(queue3.hasMoreElements()){
+            seccionCritica.element = queue3.dequeue();
+            updateHTMLQueue(3, index, queue3);
+          } else{
+            return true;
           }
-        } else if(queue1.hasMoreElements()){
-          seccionCritica.element = queue1.dequeue();
+          appendCritico(seccionCritica.element);
+          updateSeccionCriticaHTML(seccionCritica, index);
+          return false;
         }
       });
+      if(hasFinished){
+        alert('game over');
+        clearInterval(interrupt);
+      }
     }, 100);
-    // this.unbind('click');
+    this.unbind('click');
   });
 
-    function processPrioridad1(element, seccionCritica, index){
-      var prioridad = element.prioridad;
-      var compareQuantum = seccionCritica.quantum;
+  function processPrioridad(element, seccionCritica, index){
+    var prioridad = element.prioridad;
+    var compareQuantum = seccionCritica.quantum * 10;
 
-      var suspended = SUSPENDED['suspended' + index];
-      console.log('element', element);
-      console.log('seccionCritica', seccionCritica);
-      if(element.rafaga > 0){
-        seccionCritica.current += 1;
-        if(seccionCritica.current >= compareQuantum){
-          suspended.enqueue(element);
-          seccionCritica.element = null;
-        }
-        element.rafaga = parseFloat((element.rafaga-0.1).toFixed(1));
-      } else{
-        seccionCritica.current = 0;
-        TERMINADOS['terminados'+index].enqueue(element);
+    console.log('element', element);
+    console.log('seccionCritica', seccionCritica);
+    if(element.rafaga > 0){
+
+      element.rafaga = parseFloat((element.rafaga-0.1).toFixed(1));
+      if(seccionCritica.current >= compareQuantum){
+        var suspended = SUSPENDED['suspended' + index];
+        suspended.enqueue(element);
         seccionCritica.element = null;
+        seccionCritica.current = 0;
+        updateSuspendedHTML(index, suspended);
       }
+      seccionCritica.current += 1;
+    } else{
+      seccionCritica.current = 0;
+      var terminados = TERMINADOS['terminados'+index];
+      terminados.enqueue(element);
+      seccionCritica.element = null;
+      updateTerminadosHTML(index, terminados);
     }
-
-    function processPrioridad2(element, seccionCritica, index){
-
-    }
-
-    function processPrioridad3(element, seccionCritica, index){
-
-    }
-
+    updateSeccionCriticaHTML(seccionCritica, index);
+  }
 });
