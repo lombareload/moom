@@ -82,16 +82,6 @@ function Process(/*nombre, */rafaga, prioridad, recurso){
 }
 Process.index = 0;
 
-function readQueueIntoArray(queue){
-  var copy = queue.clone();
-  var result = [];
-  while(copy.hasMoreElements()){
-    result.push(copy.dequeue());
-  }
-  return result;
-}
-
-
 // var queue = new Queue();
 // queue.enqueue(1);
 // queue.enqueue(2);
