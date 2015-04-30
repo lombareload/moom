@@ -1,3 +1,4 @@
+/// <reference path="../../typings/jquery/jquery.d.ts"/>
 'use strict';
 
 var PRIORIDAD_CSS_CLASS = {
@@ -24,13 +25,13 @@ var SUSPENDED = {
   suspended1: new Queue(),
   suspended2: new Queue(),
   suspended3: new Queue()
-}
+};
 
 var TERMINADOS = {
   terminados1: new Queue(),
   terminados2: new Queue(),
   terminados3: new Queue()
-}
+};
 
 $(function(){
   QUEUES.prioridad1cpu1.setEnqueueCallback(appendListo);
@@ -67,7 +68,7 @@ $(function(){
       rafaga = parseInt(rafaga);
       var prioridad = $("#cpu" + index + "prioridad").val();
       prioridad = parseInt(prioridad);
-      var process = new Process(rafaga, prioridad);
+      var process = new Process(rafaga, prioridad, null);
 
       var queue = QUEUES['prioridad' + prioridad + "cpu" + index];
       addGantForProcess(index, process.nombre);
@@ -160,7 +161,7 @@ $(function(){
 
   function appendBar(element, style){
     var htmlElement = $('#'+element.nombre);
-    var html = '<div class="progress-bar progress-bar-'+style+'" style="width:0px"></div>'
+    var html = '<div class="progress-bar progress-bar-'+style+'" style="width:0px"></div>';
     htmlElement.append(html);
   }
 
@@ -221,6 +222,8 @@ $(function(){
         if(element){
           if(element.prioridad == 3){
             processPrioridad3(element, seccionCritica, index);
+          } else if(element.prioridad == 2){
+            processPrioridad2(element, seccionCritica, index, queue2);
           } else{
             processPrioridad(element, seccionCritica, index);
           }
@@ -239,7 +242,9 @@ $(function(){
             updateHTMLQueue(2, index, queue2);
             updateSuspendedHTML(index, suspended);
           } else if(queue2.hasMoreElements()){
-            seccionCritica.element = queue2.dequeue();
+            var removedLowest = getLowest(queue2);
+            seccionCritica.element = removedLowest[0];//queue2.dequeue();
+            queue2.first = removedLowest[1].first;
             updateHTMLQueue(2, index, queue2);
           } else if(queue3.hasMoreElements()){
             seccionCritica.element = queue3.dequeue();
@@ -259,14 +264,14 @@ $(function(){
         $('#myModal .modal-body').html(centecimas.map(function(centecima, index){
           var html = '<div>CPU'+(index+1)+' se ejecuto durante '+ centecima*0.1 +' segundos</div>';
           return html;
-        }));
+        }).join(''));
         $('#myModal').modal('show');
         clearInterval(interrupt);
       }
       addTimeAll();
     }, 100);
   });
-
+  
   function processPrioridad3(element, seccionCritica, index){
     if(element.rafaga > 0){
       element.rafaga = parseFloat((element.rafaga-0.1).toFixed(1));
@@ -275,6 +280,32 @@ $(function(){
       seccionCritica.current = 0;
       var terminados = TERMINADOS['terminados'+index];
       terminados.enqueue(element);
+      updateTerminadosHTML(index, terminados);
+    }
+    updateSeccionCriticaHTML(seccionCritica, index);
+  }
+  
+  function processPrioridad2(element, seccionCritica, index, queue) {
+    var removedLowest = getLowest(queue);
+    console.log(removedLowest[0], removedLowest[1].asArray(), queue.asArray());
+    var lowest = removedLowest[0];
+    if(element.rafaga > 0){
+      element.rafaga = parseFloat((element.rafaga-0.1).toFixed(1));
+      if(lowest && lowest.rafaga < element.rafaga){
+        var suspended = SUSPENDED['suspended'+index];
+        queue.first = removedLowest[1].first;
+        seccionCritica.element = lowest;
+        seccionCritica.current = 0;
+        appendCritico(seccionCritica.element);
+        suspended.enqueue(element);
+        updateSuspendedHTML(index, suspended);
+      }
+      seccionCritica.current += 1;
+    } else{
+      seccionCritica.current = 0;
+      var terminados = TERMINADOS['terminados'+index];
+      terminados.enqueue(element);
+      seccionCritica.element = null;
       updateTerminadosHTML(index, terminados);
     }
     updateSeccionCriticaHTML(seccionCritica, index);

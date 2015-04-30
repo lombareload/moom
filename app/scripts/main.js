@@ -72,8 +72,7 @@ function Element(value){
 Element.index = 0;
 
 // Process class
-function Process(/*nombre, */rafaga, prioridad, recurso){
-  // this.nombre = nombre;
+function Process(rafaga, prioridad, recurso){
   this.original = rafaga;
   this.nombre = 'Proc-' + Process.index++;
   this.rafaga = rafaga;
@@ -82,9 +81,31 @@ function Process(/*nombre, */rafaga, prioridad, recurso){
 }
 Process.index = 0;
 
-// var queue = new Queue();
-// queue.enqueue(1);
-// queue.enqueue(2);
+//var queue = new Queue();
+//queue.enqueue(1);
+//queue.enqueue(2);
+
+function getLowest(queue){
+  var lowest;
+  var newQueue = new Queue();
+  queue.iterate(function(element) {
+    if(lowest){
+      if(element.rafaga < lowest.rafaga){
+        newQueue.enqueue(lowest);
+        lowest = element;
+      } else{
+        newQueue.enqueue(element);
+      }
+    } else{
+      lowest = element;
+    }
+  });
+  return [lowest, newQueue];
+}
+  
+//var asd = getLowest(queue);
+//console.log(asd[0], asd[1].asArray());
+
 // var copy = queue.clone();
 // console.log(queue.dequeue());
 // console.log(queue.clone().dequeue());
